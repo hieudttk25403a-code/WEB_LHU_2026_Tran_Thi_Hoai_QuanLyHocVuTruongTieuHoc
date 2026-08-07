@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Học Vụ</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            background:#f5f6fa;
+        }
+
+        .top-bar{
+            background:#0d3b66;
+            color:white;
+            font-size:14px;
+            padding:8px 0;
+        }
+
+        .navbar{
+            background:white;
+            box-shadow:0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .hero{
+            height:500px;
+            background:linear-gradient(
+                rgba(0,0,0,0.4),
+                rgba(0,0,0,0.4)
+            ),
+            url('https://images.unsplash.com/photo-1509062522246-3755977927d7');
+            background-size:cover;
+            background-position:center;
+            display:flex;
+            align-items:center;
+            color:white;
+        }
+
+        .hero h1{
+            font-size:60px;
+            font-weight:bold;
+        }
+
+        .hero span{
+            color:#4ea8ff;
+        }
+
+        .search-box{
+            margin-top:-70px;
+            background:white;
+            border-radius:15px;
+            box-shadow:0 5px 20px rgba(0,0,0,0.1);
+            padding:35px;
+        }
+
+        .stat-card{
+            text-align:center;
+            padding:20px;
+            border-right:1px solid #ddd;
+        }
+
+        .stat-card:last-child{
+            border-right:none;
+        }
+
+        .stat-number{
+            font-size:32px;
+            font-weight:bold;
+            color:#0d6efd;
+        }
+
+        .feature-card{
+            background:white;
+            padding:25px;
+            border-radius:15px;
+            box-shadow:0 3px 15px rgba(0,0,0,0.08);
+            transition:0.3s;
+        }
+
+        .feature-card:hover{
+            transform:translateY(-5px);
+        }
+
+        footer{
+            background:#0d3b66;
+            color:white;
+            padding:30px 0;
+            margin-top:60px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container d-flex justify-content-between">
+            <div>
+                Email: hocvu@tanlap3.edu.vn
+            </div>
+
+            <div>
+                Đăng nhập / Đăng ký
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+
+            <a class="navbar-brand fw-bold text-primary" href="#">
+                📚 Học Vụ Tân Lập 3
+            </a>
+
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="menu">
+
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Trang Chủ</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Giới Thiệu</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Thông Báo</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Liên Hệ</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+
+        <div class="container">
+
+            <h1>
+                Welcome to <span>Học Vụ</span>
+            </h1>
+
+            <p class="fs-5">
+                Hệ thống quản lý học vụ Trường Tiểu học Tân Lập 3
+            </p>
+
+            <p>
+                Quản lý học sinh, giáo viên, lớp học và điểm số
+                một cách nhanh chóng và hiệu quả.
+            </p>
+
+            <button class="btn btn-primary btn-lg">
+                Đăng Nhập
+            </button>
+
+            <button class="btn btn-outline-light btn-lg ms-2">
+                Tìm Hiểu Thêm
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- Statistics -->
+    <div class="container">
+
+        <div class="search-box">
+
+            <div class="row">
+
+                <div class="col-md-3 stat-card">
+                    <div class="stat-number">520</div>
+                    <div>Học Sinh</div>
+                </div>
+
+                <div class="col-md-3 stat-card">
+                    <div class="stat-number">35</div>
+                    <div>Giáo Viên</div>
+                </div>
+
+                <div class="col-md-3 stat-card">
+                    <div class="stat-number">18</div>
+                    <div>Lớp Học</div>
+                </div>
+
+                <div class="col-md-3 stat-card">
+                    <div class="stat-number">12</div>
+                    <div>Môn Học</div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Features -->
+    <section class="container my-5">
+
+        <h2 class="text-center mb-4">
+            Chức Năng Nổi Bật
+        </h2>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h4>👨‍🎓 Quản Lý Học Sinh</h4>
+                    <p>
+                        Quản lý hồ sơ, thông tin cá nhân
+                        và kết quả học tập của học sinh.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h4>👩‍🏫 Quản Lý Giáo Viên</h4>
+                    <p>
+                        Theo dõi thông tin giáo viên
+                        và phân công giảng dạy.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h4>📊 Quản Lý Điểm Số</h4>
+                    <p>
+                        Nhập điểm, cập nhật điểm
+                        và thống kê kết quả học tập.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Notifications -->
+    <section class="container">
+
+        <div class="card shadow-sm">
+
+            <div class="card-header bg-primary text-white">
+                Thông Báo Mới Nhất
+            </div>
+
+            <div class="card-body">
+
+                <ul>
+                    <li>Kế hoạch kiểm tra cuối học kỳ.</li>
+                    <li>Thông báo họp phụ huynh học sinh.</li>
+                    <li>Lịch tổng kết năm học.</li>
+                    <li>Thông báo nghỉ lễ theo quy định.</li>
+                </ul>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer>
+
+        <div class="container text-center">
+
+            <h5>TRƯỜNG TIỂU HỌC TÂN LẬP 3</h5>
+
+            <p>
+                Hệ thống Quản lý Học vụ
+            </p>
+
+            <p>
+                Email: hocvu@tanlap3.edu.vn
+            </p>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>
