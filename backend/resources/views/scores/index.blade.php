@@ -172,7 +172,17 @@
 
 </div>
 
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show">
+        {{ session('error') }}
 
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+        ></button>
+    </div>
+@endif
 {{-- DANH SÁCH --}}
 
 <div class="card shadow-sm border-0">

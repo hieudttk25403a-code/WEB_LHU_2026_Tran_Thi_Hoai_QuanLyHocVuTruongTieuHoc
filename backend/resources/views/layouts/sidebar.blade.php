@@ -14,7 +14,12 @@
                 Dashboard
             </a>
         </li>
-
+<li>
+    <a href="{{ route('admin.accounts.index') }}">
+        <i class="fa-solid fa-users-gear"></i>
+        <span>Quản lý tài khoản</span>
+    </a>
+</li>
         <li>
             <a href="{{ route('students.index') }}"
                class="{{ request()->routeIs('students.*') ? 'active' : '' }}">
@@ -58,12 +63,6 @@
     </a>
 </li>
 
-        <li>
-<a href="{{ route('timetables.index') }}">
-    <i class="fa-solid fa-calendar-days"></i>
-    Thời khóa biểu
-</a>
-        </li>
 
 <a href="{{ route('announcements.index') }}"
    class="nav-link">
@@ -74,19 +73,7 @@
 
 </a>
 
-        <li>
-            <a href="#">
-                <i class="fa-solid fa-chart-column"></i>
-                Analytics
-            </a>
-        </li>
 
-        <li>
-            <a href="{{ route('profile.edit') }}">
-                <i class="fa-solid fa-user"></i>
-                Hồ sơ
-            </a>
-        </li>
 
     </ul>
 

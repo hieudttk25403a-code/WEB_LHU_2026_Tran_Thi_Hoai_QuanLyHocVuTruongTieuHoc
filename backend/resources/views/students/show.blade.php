@@ -1,313 +1,923 @@
 @extends('layouts.app')
 
-@section('title', 'Chi tiết học sinh')
-
 @section('content')
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container-fluid py-4">
 
-    <div>
-        <h2 class="fw-bold mb-1">
-            Chi tiết học sinh
-        </h2>
+    {{-- HEADER --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="fas fa-user-graduate text-success me-2"></i>
+                Hồ sơ học sinh
+            </h3>
+            <p class="text-muted mb-0">
+                Thông tin chi tiết của {{ $student->full_name }}
+            </p>
+        </div>
 
-        <p class="text-muted mb-0">
-            Thông tin chi tiết và hồ sơ của học sinh
-        </p>
+        <div class="d-flex gap-2">
+            <a href="{{ route('students.index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>
+                Quay lại
+            </a>
+
+            <a href="{{ route('students.edit', $student) }}" class="btn btn-success">
+                <i class="fas fa-edit me-1"></i>
+                Chỉnh sửa
+            </a>
+        </div>
     </div>
 
-    <div>
+    {{-- THÔNG BÁO --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>
+            {{ session('success') }}
 
-        <a href="{{ route('students.index') }}"
-           class="btn btn-secondary">
-
-            <i class="fa-solid fa-arrow-left me-1"></i>
-
-            Quay lại
-
-        </a>
-
-        <a href="{{ route('students.edit', $student) }}"
-           class="btn btn-warning">
-
-            <i class="fa-solid fa-pen me-1"></i>
-
-            Chỉnh sửa
-
-        </a>
-
-    </div>
-
-</div>
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
 
-{{-- ===================================================== --}}
-{{-- THÔNG TIN HỌC SINH --}}
-{{-- ===================================================== --}}
+    {{-- THÔNG TIN CƠ BẢN --}}
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-0 py-3">
+            <h5 class="fw-bold mb-0">
+                <i class="fas fa-id-card text-success me-2"></i>
+                Thông tin cá nhân
+            </h5>
+        </div>
 
-<div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
 
-    <div class="card-header bg-primary text-white">
+            <div class="row g-4">
 
-        <h5 class="mb-0">
+                {{-- AVATAR --}}
+                <div class="col-md-3 text-center">
 
-            <i class="fa-solid fa-user-graduate me-2"></i>
+                    <div class="mb-3">
 
-            Thông tin học sinh
+                        @if(!empty($student->avatar))
+                            <img src="{{ asset('storage/' . $student->avatar) }}"
+                                 class="rounded-circle shadow-sm"
+                                 style="width:150px;height:150px;object-fit:cover;">
+                        @else
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow-sm"
+                                 style="width:150px;height:150px;">
+                                <i class="fas fa-user-graduate fa-4x text-secondary"></i>
+                            </div>
+                        @endif
 
-        </h5>
+                    </div>
 
-    </div>
+                    <h5 class="fw-bold mb-1">
+                        {{ $student->full_name }}
+                    </h5>
 
+                    <div class="text-muted">
+                        {{ $student->student_code }}
+                    </div>
 
-    <div class="card-body">
+                    <div class="mt-2">
 
-        <div class="row g-4">
+                        @if($student->status === 'Đang học')
+                            <span class="badge bg-success">
+                                Đang học
+                            </span>
+                        @elseif($student->status === 'Chuyển trường')
+                            <span class="badge bg-warning text-dark">
+                                Chuyển trường
+                            </span>
+                        @elseif($student->status === 'Đuổi học')
+                            <span class="badge bg-danger">
+                                Đuổi học
+                            </span>
+                        @else
+                            <span class="badge bg-secondary">
+                                {{ $student->status }}
+                            </span>
+                        @endif
 
-            <div class="col-md-6">
-
-                <small class="text-muted">
-                    Mã học sinh
-                </small>
-
-                <div class="fw-semibold fs-5">
-                    {{ $student->student_code }}
-                </div>
-
-            </div>
-
-
-            <div class="col-md-6">
-
-                <small class="text-muted">
-                    Họ và tên
-                </small>
-
-                <div class="fw-semibold fs-5">
-                    {{ $student->full_name }}
-                </div>
-
-            </div>
-
-
-            <div class="col-md-4">
-
-                <small class="text-muted">
-                    Ngày sinh
-                </small>
-
-                <div class="fw-semibold">
-
-                    {{ $student->date_of_birth
-                        ? \Carbon\Carbon::parse($student->date_of_birth)->format('d/m/Y')
-                        : '-' }}
+                    </div>
 
                 </div>
 
-            </div>
 
+                {{-- THÔNG TIN --}}
+                <div class="col-md-9">
 
-            <div class="col-md-4">
+                    <div class="row g-3">
 
-                <small class="text-muted">
-                    Giới tính
-                </small>
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <small class="text-muted">
+                                    Mã học sinh
+                                </small>
+                                <div class="fw-semibold">
+                                    {{ $student->student_code }}
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="fw-semibold">
-                    {{ $student->gender ?? '-' }}
-                </div>
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <small class="text-muted">
+                                    Họ và tên
+                                </small>
+                                <div class="fw-semibold">
+                                    {{ $student->full_name }}
+                                </div>
+                            </div>
+                        </div>
 
-            </div>
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <small class="text-muted">
+                                    Ngày sinh
+                                </small>
+                                <div class="fw-semibold">
+                                    {{ $student->date_of_birth
+                                        ? $student->date_of_birth->format('d/m/Y')
+                                        : '—' }}
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <small class="text-muted">
+                                    Giới tính
+                                </small>
+                                <div class="fw-semibold">
+                                    {{ $student->gender ?? '—' }}
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="col-md-4">
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <small class="text-muted">
+                                    Số điện thoại
+                                </small>
+                                <div class="fw-semibold">
+                                    {{ $student->phone ?? '—' }}
+                                </div>
+                            </div>
+                        </div>
 
-                <small class="text-muted">
-                    Trạng thái
-                </small>
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <small class="text-muted">
+                                    Email
+                                </small>
+                                <div class="fw-semibold">
+                                    {{ $student->email ?? '—' }}
+                                </div>
+                            </div>
+                        </div>
 
-                <div>
+                        <div class="col-md-12">
+                            <div class="info-box">
+                                <small class="text-muted">
+                                    Địa chỉ
+                                </small>
+                                <div class="fw-semibold">
+                                    {{ $student->address ?? '—' }}
+                                </div>
+                            </div>
+                        </div>
 
-                    @if($student->status)
+                        {{-- LỚP HIỆN TẠI --}}
+                        <div class="col-md-6">
+                            <div class="info-box border-success">
 
-                        <span class="badge bg-success">
-                            {{ $student->status }}
-                        </span>
+                                <small class="text-muted">
+                                    Lớp hiện tại
+                                </small>
 
-                    @else
+                                @if($student->schoolClass)
+                                    <div class="fw-bold text-success">
+                                        {{ $student->schoolClass->class_name }}
+                                    </div>
 
-                        <span class="text-muted">
-                            -
-                        </span>
+                                    <small class="text-muted">
+                                        Khối {{ $student->schoolClass->grade }}
+                                    </small>
+                                @else
+                                    <div class="text-danger">
+                                        Chưa phân lớp
+                                    </div>
+                                @endif
 
-                    @endif
+                            </div>
+                        </div>
 
-                </div>
+                    </div>
 
-            </div>
-
-
-            <div class="col-md-6">
-
-                <small class="text-muted">
-                    Email
-                </small>
-
-                <div class="fw-semibold">
-                    {{ $student->email ?? '-' }}
-                </div>
-
-            </div>
-
-
-            <div class="col-md-6">
-
-                <small class="text-muted">
-                    Số điện thoại
-                </small>
-
-                <div class="fw-semibold">
-                    {{ $student->phone ?? '-' }}
-                </div>
-
-            </div>
-
-
-            <div class="col-12">
-
-                <small class="text-muted">
-                    Địa chỉ
-                </small>
-
-                <div class="fw-semibold">
-                    {{ $student->address ?? '-' }}
                 </div>
 
             </div>
 
         </div>
+    </div>
+
+
+    {{-- LỊCH SỬ LỚP --}}
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="fw-bold mb-0">
+                    <i class="fas fa-history text-primary me-2"></i>
+                    Lịch sử lớp học
+                </h5>
+
+                <span class="badge bg-primary">
+                    {{ $student->classHistories->count() }} năm
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            @if($student->classHistories->count() > 0)
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th width="60">#</th>
+                                <th>Năm học</th>
+                                <th>Lớp</th>
+                                <th>Khối</th>
+                                <th>Trạng thái</th>
+                                <th>Thời gian</th>
+                                <th>Ghi chú</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach($student->classHistories as $history)
+
+                                <tr>
+
+                                    <td>
+                                        {{ $loop->iteration }}
+                                    </td>
+
+                                    <td>
+                                        @if($history->schoolYear)
+                                            <strong>
+                                                {{ $history->schoolYear->name }}
+                                            </strong>
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
+
+                                    <td>
+
+                                        @if($history->schoolClass)
+
+                                            <span class="badge bg-success-subtle text-success fs-6">
+                                                {{ $history->schoolClass->class_name }}
+                                            </span>
+
+                                        @else
+                                            —
+                                        @endif
+
+                                    </td>
+
+                                    <td>
+
+                                        @if($history->schoolClass)
+                                            Khối {{ $history->schoolClass->grade }}
+                                        @else
+                                            —
+                                        @endif
+
+                                    </td>
+
+                                    <td>
+
+                                        @switch($history->status)
+
+                                            @case('Đang học')
+                                                <span class="badge bg-success">
+                                                    Đang học
+                                                </span>
+                                                @break
+
+                                            @case('Lên lớp')
+                                                <span class="badge bg-primary">
+                                                    Lên lớp
+                                                </span>
+                                                @break
+
+                                            @case('Ở lại lớp')
+                                                <span class="badge bg-warning text-dark">
+                                                    Ở lại lớp
+                                                </span>
+                                                @break
+
+                                            @case('Chuyển lớp')
+                                                <span class="badge bg-info text-dark">
+                                                    Chuyển lớp
+                                                </span>
+                                                @break
+
+                                            @case('Bảo lưu')
+                                                <span class="badge bg-secondary">
+                                                    Bảo lưu
+                                                </span>
+                                                @break
+
+                                            @case('Chuyển trường')
+                                                <span class="badge bg-warning text-dark">
+                                                    Chuyển trường
+                                                </span>
+                                                @break
+
+                                            @case('Đuổi học')
+                                                <span class="badge bg-danger">
+                                                    Đuổi học
+                                                </span>
+                                                @break
+
+                                            @default
+                                                <span class="badge bg-secondary">
+                                                    {{ $history->status ?? '—' }}
+                                                </span>
+
+                                        @endswitch
+
+                                    </td>
+
+                                    <td>
+
+                                        @if($history->start_date)
+                                            {{ $history->start_date->format('d/m/Y') }}
+                                        @endif
+
+                                        @if($history->end_date)
+                                            -
+                                            {{ $history->end_date->format('d/m/Y') }}
+                                        @endif
+
+                                    </td>
+
+<td>
+    @php
+        $homeroomTeacher = null;
+
+        if ($history->schoolClass) {
+            $assignment = \App\Models\ClassAssignment::with('teacher')
+                ->where('class_id', $history->schoolClass->id)
+                ->where('school_year_id', $history->school_year_id)
+                ->first();
+
+            if ($assignment && $assignment->teacher) {
+                $homeroomTeacher = $assignment->teacher;
+            }
+        }
+    @endphp
+
+    @if($homeroomTeacher)
+        GVCN: {{ $homeroomTeacher->full_name }}
+    @else
+        Chưa phân công GVCN
+    @endif
+</td>
+
+                                </tr>
+
+                            @endforeach
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            @else
+
+                <div class="text-center py-4 text-muted">
+
+                    <i class="fas fa-history fa-2x mb-2"></i>
+
+                    <p class="mb-0">
+                        Chưa có lịch sử lớp học.
+                    </p>
+
+                </div>
+
+            @endif
+
+        </div>
 
     </div>
 
-</div>
+
+    {{-- PHỤ HUYNH --}}
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="fw-bold mb-0">
+                    <i class="fas fa-users text-success me-2"></i>
+                    Thông tin phụ huynh
+                </h5>
+
+                <a href="{{ route('student-parents.create', $student) }}"
+                   class="btn btn-sm btn-success">
+
+                    <i class="fas fa-plus me-1"></i>
+                    Thêm phụ huynh
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            @if($student->parents->count())
+
+                <div class="row g-3">
+
+                    @foreach($student->parents as $parent)
+
+                        <div class="col-md-6">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <div class="d-flex justify-content-between">
+
+                                    <h6 class="fw-bold mb-3">
+                                        {{ $parent->full_name }}
+                                    </h6>
+
+                                    <a href="{{ route(
+                                        'student-parents.edit',
+                                        [$student, $parent]
+                                    ) }}"
+                                       class="btn btn-sm btn-outline-primary">
+
+                                        <i class="fas fa-edit"></i>
+
+                                    </a>
+
+                                </div>
+
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        Quan hệ:
+                                    </small>
+                                    {{ $parent->relationship ?? '—' }}
+                                </div>
+
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        Nghề nghiệp:
+                                    </small>
+                                    {{ $parent->occupation ?? '—' }}
+                                </div>
+
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        Điện thoại:
+                                    </small>
+                                    {{ $parent->phone ?? '—' }}
+                                </div>
+
+                                <div>
+                                    <small class="text-muted">
+                                        Email:
+                                    </small>
+                                    {{ $parent->email ?? '—' }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    @endforeach
+
+                </div>
+
+            @else
+
+                <div class="text-center text-muted py-3">
+                    Chưa có thông tin phụ huynh.
+                </div>
+
+            @endif
+
+        </div>
+
+    </div>
 
 
-{{-- ===================================================== --}}
-{{-- THÔNG TIN PHỤ HUYNH --}}
-{{-- ===================================================== --}}
+    {{-- SỨC KHỎE --}}
+    <div class="card border-0 shadow-sm mb-4">
 
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="fw-bold mb-0">
+                    <i class="fas fa-heartbeat text-danger me-2"></i>
+                    Hồ sơ sức khỏe
+                </h5>
+
+                @if($student->healthProfile)
+                    <a href="{{ route(
+                        'student-health.edit',
+                        [$student, $student->healthProfile]
+                    ) }}"
+                       class="btn btn-sm btn-outline-primary">
+
+                        <i class="fas fa-edit me-1"></i>
+                        Chỉnh sửa
+
+                    </a>
+                @endif
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            @if($student->healthProfile)
+
+                <div class="row g-3">
+
+                    <div class="col-md-3">
+                        <div class="info-box">
+                            <small class="text-muted">
+                                Chiều cao
+                            </small>
+
+                            <div class="fw-bold">
+                                {{ $student->healthProfile->height ?? '—' }}
+                                cm
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="info-box">
+                            <small class="text-muted">
+                                Cân nặng
+                            </small>
+
+                            <div class="fw-bold">
+                                {{ $student->healthProfile->weight ?? '—' }}
+                                kg
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="info-box">
+                            <small class="text-muted">
+                                Nhóm máu
+                            </small>
+
+                            <div class="fw-bold">
+                                {{ $student->healthProfile->blood_type ?? '—' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="info-box">
+                            <small class="text-muted">
+                                Dị ứng
+                            </small>
+
+                            <div class="fw-bold">
+                                {{ $student->healthProfile->allergy ?? 'Không' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+
+                        <div class="info-box">
+
+                            <small class="text-muted">
+                                Ghi chú
+                            </small>
+
+                            <div>
+                                {{ $student->healthProfile->note ?? 'Không có' }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            @else
+
+                <div class="text-center py-3 text-muted">
+
+                    <p>
+                        Chưa có hồ sơ sức khỏe.
+                    </p>
+
+                    <a href="{{ route(
+                        'student-health.create',
+                        $student
+                    ) }}"
+                       class="btn btn-success">
+
+                        <i class="fas fa-plus me-1"></i>
+                        Thêm hồ sơ sức khỏe
+
+                    </a>
+
+                </div>
+
+            @endif
+
+        </div>
+
+    </div>
+
+
+    {{-- BẢNG ĐIỂM --}}
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <h5 class="fw-bold mb-0">
+                <i class="fas fa-graduation-cap text-primary me-2"></i>
+                Kết quả học tập
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            @if($student->scores->count())
+
+                @php
+                    $groupedScores = $student->scores
+                        ->groupBy(function ($score) {
+                            return optional($score->schoolYear)->name
+                                ?? 'Chưa xác định';
+                        });
+                @endphp
+
+                @foreach($groupedScores as $year => $scores)
+
+                    <h6 class="fw-bold mt-2 mb-3">
+                        <i class="fas fa-calendar-alt me-1"></i>
+                        Năm học {{ $year }}
+                    </h6>
+
+                    <div class="table-responsive mb-4">
+
+                        <table class="table table-bordered align-middle">
+
+                            <thead class="table-light">
+
+                                <tr>
+                                    <th>Môn học</th>
+                                    <th>Giáo viên</th>
+                                    <th>Miệng</th>
+                                    <th>15 phút</th>
+                                    <th>Giữa kỳ</th>
+                                    <th>Cuối kỳ</th>
+                                    <th>TB</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @foreach($scores as $score)
+
+                                    <tr>
+
+                                        <td>
+                                            {{ optional($score->subject)->subject_name ?? '—' }}
+                                        </td>
+
+<td>
+
+    @php
+
+        $assignedTeacher =
+            \App\Models\TeacherSubjectAssignment::with('teacher')
+                ->where(
+                    'subject_id',
+                    $score->subject_id
+                )
+                ->where(
+                    'class_id',
+                    $student->class_id
+                )
+                ->where(
+                    'school_year_id',
+                    $score->school_year_id
+                )
+                ->first();
+
+    @endphp
+
+    @if($assignedTeacher && $assignedTeacher->teacher)
+
+        {{ $assignedTeacher->teacher->full_name }}
+
+    @else
+
+        <span class="text-muted">
+            Chưa phân công
+        </span>
+
+    @endif
+
+</td>
+
+                                        <td>
+                                            {{ $score->oral_score ?? '—' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $score->fifteen_minute_score ?? '—' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $score->midterm_score ?? '—' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $score->final_score ?? '—' }}
+                                        </td>
+
+                                        <td class="fw-bold">
+                                            {{ $score->average_score ?? '—' }}
+                                        </td>
+
+                                    </tr>
+
+                                @endforeach
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                @endforeach
+
+            @else
+
+                <div class="text-center text-muted py-3">
+                    Chưa có dữ liệu điểm.
+                </div>
+
+            @endif
+
+        </div>
+
+    </div>
+{{-- ================= KẾT QUẢ RÈN LUYỆN ================= --}}
 <div class="card shadow-sm border-0 mb-4">
 
-    <div class="card-header bg-success text-white">
+    <div class="card-header bg-primary text-white">
 
         <h5 class="mb-0">
-
-            <i class="fa-solid fa-people-roof me-2"></i>
-
-            Thông tin phụ huynh
-
+            <i class="fa-solid fa-user-check me-2"></i>
+            Kết quả rèn luyện
         </h5>
 
     </div>
 
-
     <div class="card-body">
 
-        @if($student->parents && $student->parents->count() > 0)
+        @php
 
-            <div class="table-responsive">
+            $activeYear =
+                \App\Models\SchoolYear::where(
+                    'is_active',
+                    1
+                )->first();
 
-                <table class="table table-hover align-middle mb-0">
+            $yearResult = null;
 
-                    <thead class="table-light">
+            if ($activeYear) {
 
-                        <tr>
+                $yearResult =
+                    $student->yearResults
+                        ->firstWhere(
+                            'school_year_id',
+                            $activeYear->id
+                        );
 
-                            <th>
-                                Họ tên
-                            </th>
+            }
 
-                            <th>
-                                Quan hệ
-                            </th>
-
-                            <th>
-                                Nghề nghiệp
-                            </th>
-
-                            <th>
-                                Số điện thoại
-                            </th>
-
-                            <th>
-                                Email
-                            </th>
-
-                        </tr>
-
-                    </thead>
+        @endphp
 
 
-                    <tbody>
+        @if($activeYear)
 
-                        @foreach($student->parents as $parent)
+            <div class="mb-3">
 
-                            <tr>
+                <div class="fw-bold">
+                    <i class="fa-solid fa-calendar me-1"></i>
+                    Năm học {{ $activeYear->name }}
+                </div>
 
-                                <td class="fw-semibold">
-
-                                    {{ $parent->full_name }}
-
-                                </td>
-
-
-                                <td>
-
-                                    {{ $parent->relationship }}
-
-                                </td>
+            </div>
 
 
-                                <td>
+            <div class="row">
 
-                                    {{ $parent->occupation ?? '-' }}
+                <div class="col-md-6">
 
-                                </td>
+                    <div class="border rounded p-3">
 
+                        <div class="text-muted small mb-1">
+                            Hạnh kiểm
+                        </div>
 
-                                <td>
+                        @if(
+                            $yearResult &&
+                            $yearResult->conduct
+                        )
 
-                                    {{ $parent->phone ?? '-' }}
+                            @php
 
-                                </td>
+                                $conductClass = match(
+                                    $yearResult->conduct
+                                ) {
 
+                                    'Tốt' =>
+                                        'bg-success',
 
-                                <td>
+                                    'Khá' =>
+                                        'bg-primary',
 
-                                    {{ $parent->email ?? '-' }}
+                                    'Đạt' =>
+                                        'bg-warning text-dark',
 
-                                </td>
+                                    'Chưa đạt' =>
+                                        'bg-danger',
 
-                            </tr>
+                                    default =>
+                                        'bg-secondary',
 
-                        @endforeach
+                                };
 
-                    </tbody>
+                            @endphp
 
-                </table>
+                            <span
+                                class="badge {{ $conductClass }}"
+                                style="font-size: 14px;"
+                            >
+                                {{ $yearResult->conduct }}
+                            </span>
+
+                        @else
+
+                            <span class="text-muted">
+                                Chưa xếp
+                            </span>
+
+                        @endif
+
+                    </div>
+
+                </div>
 
             </div>
 
         @else
 
-            <div class="text-center text-muted py-4">
-
-                <i class="fa-solid fa-users fa-2x mb-3"></i>
-
-                <p class="mb-0">
-                    Chưa có thông tin phụ huynh.
-                </p>
-
+            <div class="text-muted">
+                Chưa xác định năm học.
             </div>
 
         @endif
@@ -316,232 +926,36 @@
 
 </div>
 
-
-{{-- ===================================================== --}}
-{{-- HỒ SƠ SỨC KHỎE --}}
-{{-- ===================================================== --}}
-
-<div class="card shadow-sm border-0 mb-4">
-
-    <div class="card-header bg-danger text-white">
-
-        <h5 class="mb-0">
-
-            <i class="fa-solid fa-heart-pulse me-2"></i>
-
-            Hồ sơ sức khỏe
-
-        </h5>
-
-    </div>
-
-
-    <div class="card-body">
-
-        {{-- Hiển thị lỗi --}}
-
-        @if($errors->any())
-
-            <div class="alert alert-danger">
-
-                <strong>
-                    Có lỗi xảy ra:
-                </strong>
-
-                <ul class="mb-0 mt-2">
-
-                    @foreach($errors->all() as $error)
-
-                        <li>
-                            {{ $error }}
-                        </li>
-
-                    @endforeach
-
-                </ul>
-
-            </div>
-
-        @endif
-
-
-        {{-- Thông báo thành công --}}
-
-        @if(session('success'))
-
-            <div class="alert alert-success">
-
-                <i class="fa-solid fa-circle-check me-2"></i>
-
-                {{ session('success') }}
-
-            </div>
-
-        @endif
-
-
-        <form
-            action="{{ route('students.health.store', $student) }}"
-            method="POST">
-
-            @csrf
-
-
-            <div class="row">
-
-
-                {{-- Chiều cao --}}
-
-                <div class="col-md-6 mb-3">
-
-                    <label class="form-label fw-semibold">
-
-                        Chiều cao (cm)
-
-                    </label>
-
-                    <input
-                        type="number"
-                        name="height"
-                        class="form-control"
-                        step="0.01"
-                        min="0"
-                        max="300"
-                        placeholder="Ví dụ: 125"
-                        value="{{ old('height', optional($student->health)->height) }}">
-
-                </div>
-
-
-                {{-- Cân nặng --}}
-
-                <div class="col-md-6 mb-3">
-
-                    <label class="form-label fw-semibold">
-
-                        Cân nặng (kg)
-
-                    </label>
-
-                    <input
-                        type="number"
-                        name="weight"
-                        class="form-control"
-                        step="0.01"
-                        min="0"
-                        max="500"
-                        placeholder="Ví dụ: 25"
-                        value="{{ old('weight', optional($student->health)->weight) }}">
-
-                </div>
-
-
-                {{-- Nhóm máu --}}
-
-                <div class="col-md-6 mb-3">
-
-                    <label class="form-label fw-semibold">
-
-                        Nhóm máu
-
-                    </label>
-
-                    <select
-                        name="blood_type"
-                        class="form-select">
-
-                        <option value="">
-                            -- Chọn nhóm máu --
-                        </option>
-
-                        <option value="A"
-                            {{ old('blood_type', optional($student->health)->blood_type) == 'A' ? 'selected' : '' }}>
-                            A
-                        </option>
-
-                        <option value="B"
-                            {{ old('blood_type', optional($student->health)->blood_type) == 'B' ? 'selected' : '' }}>
-                            B
-                        </option>
-
-                        <option value="AB"
-                            {{ old('blood_type', optional($student->health)->blood_type) == 'AB' ? 'selected' : '' }}>
-                            AB
-                        </option>
-
-                        <option value="O"
-                            {{ old('blood_type', optional($student->health)->blood_type) == 'O' ? 'selected' : '' }}>
-                            O
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                {{-- Dị ứng --}}
-
-                <div class="col-md-6 mb-3">
-
-                    <label class="form-label fw-semibold">
-
-                        Dị ứng
-
-                    </label>
-
-                    <input
-                        type="text"
-                        name="allergies"
-                        class="form-control"
-                        placeholder="Ví dụ: Dị ứng hải sản"
-                        value="{{ old('allergies', optional($student->health)->allergies) }}">
-
-                </div>
-
-
-                {{-- Ghi chú --}}
-
-                <div class="col-12 mb-3">
-
-                    <label class="form-label fw-semibold">
-
-                        Ghi chú
-
-                    </label>
-
-                    <textarea
-                        name="notes"
-                        class="form-control"
-                        rows="4"
-                        placeholder="Nhập ghi chú về sức khỏe học sinh...">{{ old('notes', optional($student->health)->notes) }}</textarea>
-
-                </div>
-
-            </div>
-
-
-            <hr>
-
-
-            <div class="d-flex justify-content-end">
-
-                <button
-                    type="submit"
-                    class="btn btn-success">
-
-                    <i class="fa-solid fa-save me-1"></i>
-
-                    Lưu hồ sơ sức khỏe
-
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
-
 </div>
 
+
+<style>
+
+    .info-box {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 14px 16px;
+        height: 100%;
+    }
+
+    .info-box small {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .card {
+        border-radius: 14px;
+    }
+
+    .card-header {
+        border-radius: 14px 14px 0 0 !important;
+    }
+
+    .table th {
+        white-space: nowrap;
+    }
+
+</style>
 
 @endsection

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,11 +24,68 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        /*
+        |--------------------------------------------------------------------------
+        | XÁC THỰC ĐĂNG NHẬP
+        |--------------------------------------------------------------------------
+        */
+
         $request->authenticate();
+
+        /*
+        |--------------------------------------------------------------------------
+        | TẠO SESSION MỚI
+        |--------------------------------------------------------------------------
+        */
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        /*
+        |--------------------------------------------------------------------------
+        | LẤY USER ĐANG ĐĂNG NHẬP
+        |--------------------------------------------------------------------------
+        */
+
+        $user = Auth::user();
+
+        /*
+        |--------------------------------------------------------------------------
+        | PHÂN QUYỀN VÀ ĐIỀU HƯỚNG
+        |--------------------------------------------------------------------------
+        */
+
+        if ($user->role === 'admin') {
+
+            return redirect()->route('admin.dashboard');
+        }
+
+        if ($user->role === 'teacher') {
+
+            return redirect()->route('teacher.dashboard');
+        }
+
+        if ($user->role === 'bgh') {
+
+            return redirect()->route('bgh.dashboard');
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | TRƯỜNG HỢP TÀI KHOẢN CHƯA CÓ QUYỀN HỢP LỆ
+        |--------------------------------------------------------------------------
+        */
+
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect()
+            ->route('login')
+            ->withErrors([
+                'email' => 'Tài khoản chưa được phân quyền hợp lệ.',
+            ]);
     }
 
     /**

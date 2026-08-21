@@ -9,6 +9,8 @@ class StudentParent extends Model
 {
     use HasFactory;
 
+    protected $table = 'student_parents';
+
     protected $fillable = [
         'student_id',
         'full_name',
@@ -18,9 +20,6 @@ class StudentParent extends Model
         'email',
     ];
 
-    /**
-     * Phụ huynh thuộc về học sinh
-     */
     public function student()
     {
         return $this->belongsTo(Student::class);

@@ -1,240 +1,300 @@
 @extends('layouts.app')
 
-@section('title', 'Thêm lớp học')
-
 @section('content')
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container py-4">
 
-    <div>
-        <h2 class="fw-bold mb-1">
-            Thêm lớp học
-        </h2>
+    {{-- Header --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <p class="text-muted mb-0">
-            Nhập thông tin lớp học mới
-        </p>
-    </div>
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="fas fa-school me-2 text-primary"></i>
+                Thêm lớp học
+            </h3>
 
-    <a href="{{ route('classes.index') }}"
-       class="btn btn-secondary">
+            <p class="text-muted mb-0">
+                Tạo lớp học mới trong hệ thống
+            </p>
+        </div>
 
-        <i class="fa-solid fa-arrow-left me-1"></i>
+        <a href="{{ route('classes.index') }}"
+           class="btn btn-outline-secondary">
 
-        Quay lại
-
-    </a>
-
-</div>
-
-
-<div class="card shadow-sm border-0">
-
-    <div class="card-header bg-primary text-white">
-
-        <h5 class="mb-0">
-
-            <i class="fa-solid fa-school me-2"></i>
-
-            Thông tin lớp học
-
-        </h5>
+            <i class="fas fa-arrow-left me-1"></i>
+            Quay lại
+        </a>
 
     </div>
 
 
-    <div class="card-body">
+    {{-- Hiển thị lỗi --}}
+    @if ($errors->any())
 
-        @if($errors->any())
+        <div class="alert alert-danger">
 
-            <div class="alert alert-danger">
-
-                <strong>
-                    Vui lòng kiểm tra lại thông tin:
-                </strong>
-
-                <ul class="mb-0 mt-2">
-
-                    @foreach($errors->all() as $error)
-
-                        <li>{{ $error }}</li>
-
-                    @endforeach
-
-                </ul>
-
+            <div class="fw-bold mb-2">
+                <i class="fas fa-exclamation-circle me-1"></i>
+                Có lỗi xảy ra:
             </div>
 
-        @endif
+            <ul class="mb-0">
+
+                @foreach ($errors->all() as $error)
+
+                    <li>{{ $error }}</li>
+
+                @endforeach
+
+            </ul>
+
+        </div>
+
+    @endif
 
 
-        <form action="{{ route('classes.store') }}"
-              method="POST">
+    {{-- Form --}}
+    <div class="card shadow-sm border-0">
 
-            @csrf
+        <div class="card-header bg-white py-3">
 
-            <div class="row">
+            <h5 class="mb-0 fw-bold">
+                Thông tin lớp học
+            </h5>
 
-                {{-- Tên lớp --}}
+        </div>
 
-                <div class="col-md-6 mb-3">
 
-                    <label class="form-label fw-semibold">
+        <div class="card-body">
 
-                        Tên lớp <span class="text-danger">*</span>
+            <form action="{{ route('classes.store') }}"
+                  method="POST">
 
-                    </label>
+                @csrf
 
-                    <input
-                        type="text"
-                        name="class_name"
-                        class="form-control"
-                        placeholder="Ví dụ: 1A1"
-                        value="{{ old('class_name') }}">
+
+                <div class="row g-4">
+
+                    {{-- Tên lớp --}}
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Tên lớp
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            name="class_name"
+                            class="form-control @error('class_name') is-invalid @enderror"
+                            value="{{ old('class_name') }}"
+                            placeholder="Ví dụ: 1A1"
+                            required
+                        >
+
+                        @error('class_name')
+
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+
+                        @enderror
+
+                    </div>
+
+
+                    {{-- Khối --}}
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Khối
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <select
+                            name="grade"
+                            class="form-select @error('grade') is-invalid @enderror"
+                            required
+                        >
+
+                            <option value="">
+                                -- Chọn khối --
+                            </option>
+
+                            <option value="1"
+                                {{ old('grade') == '1' ? 'selected' : '' }}>
+                                Khối 1
+                            </option>
+
+                            <option value="2"
+                                {{ old('grade') == '2' ? 'selected' : '' }}>
+                                Khối 2
+                            </option>
+
+                            <option value="3"
+                                {{ old('grade') == '3' ? 'selected' : '' }}>
+                                Khối 3
+                            </option>
+
+                            <option value="4"
+                                {{ old('grade') == '4' ? 'selected' : '' }}>
+                                Khối 4
+                            </option>
+
+                            <option value="5"
+                                {{ old('grade') == '5' ? 'selected' : '' }}>
+                                Khối 5
+                            </option>
+
+                        </select>
+
+                        @error('grade')
+
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+
+                        @enderror
+
+                    </div>
+
+
+                    {{-- Sĩ số --}}
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Sĩ số
+                        </label>
+
+                        <input
+                            type="number"
+                            name="student_count"
+                            class="form-control @error('student_count') is-invalid @enderror"
+                            value="{{ old('student_count', 0) }}"
+                            min="0"
+                            placeholder="0"
+                        >
+
+                        <small class="text-muted">
+                            Sĩ số thực tế sẽ được cập nhật theo danh sách học sinh.
+                        </small>
+
+                        @error('student_count')
+
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+
+                        @enderror
+
+                    </div>
+
+
+                    {{-- Trạng thái --}}
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Trạng thái
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <select
+                            name="status"
+                            class="form-select @error('status') is-invalid @enderror"
+                            required
+                        >
+
+                            <option value="">
+                                -- Chọn trạng thái --
+                            </option>
+
+                            <option value="Chưa nhập học"
+                                {{ old('status') == 'Chưa nhập học' ? 'selected' : '' }}>
+                                Chưa nhập học
+                            </option>
+
+                            <option value="Đang nhập học"
+                                {{ old('status', 'Đang nhập học') == 'Đang nhập học' ? 'selected' : '' }}>
+                                Đang nhập học
+                            </option>
+
+                            <option value="Đã kết thúc năm học"
+                                {{ old('status') == 'Đã kết thúc năm học' ? 'selected' : '' }}>
+                                Đã kết thúc năm học
+                            </option>
+
+                        </select>
+
+                        @error('status')
+
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+
+                        @enderror
+
+                    </div>
+
+
+                    {{-- GVCN --}}
+                    <div class="col-12">
+
+                        <div class="alert alert-info mb-0">
+
+                            <div class="fw-bold mb-1">
+
+                                <i class="fas fa-info-circle me-1"></i>
+
+                                Giáo viên chủ nhiệm
+
+                            </div>
+
+                            <div>
+
+                                Giáo viên chủ nhiệm <strong>không nhập tại đây</strong>.
+
+                                Sau khi tạo lớp, bạn vào:
+
+                                <strong>
+                                    Phân công giáo viên →
+                                    Phân công giáo viên chủ nhiệm
+                                </strong>
+
+                                để phân công GVCN theo từng năm học.
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
 
-                {{-- Khối --}}
+                {{-- Buttons --}}
+                <div class="d-flex justify-content-end gap-2 mt-4">
 
-                <div class="col-md-6 mb-3">
+                    <a href="{{ route('classes.index') }}"
+                       class="btn btn-secondary">
 
-                    <label class="form-label fw-semibold">
+                        <i class="fas fa-times me-1"></i>
+                        Hủy
 
-                        Khối <span class="text-danger">*</span>
+                    </a>
 
-                    </label>
+                    <button type="submit"
+                            class="btn btn-primary">
 
-                    <select name="grade"
-                            class="form-select">
+                        <i class="fas fa-save me-1"></i>
+                        Lưu lớp học
 
-                        <option value="">
-                            -- Chọn khối --
-                        </option>
-
-                        <option value="1"
-                            {{ old('grade') == '1' ? 'selected' : '' }}>
-                            Khối 1
-                        </option>
-
-                        <option value="2"
-                            {{ old('grade') == '2' ? 'selected' : '' }}>
-                            Khối 2
-                        </option>
-
-                        <option value="3"
-                            {{ old('grade') == '3' ? 'selected' : '' }}>
-                            Khối 3
-                        </option>
-
-                        <option value="4"
-                            {{ old('grade') == '4' ? 'selected' : '' }}>
-                            Khối 4
-                        </option>
-
-                        <option value="5"
-                            {{ old('grade') == '5' ? 'selected' : '' }}>
-                            Khối 5
-                        </option>
-
-                    </select>
+                    </button>
 
                 </div>
 
+            </form>
 
-                {{-- Giáo viên chủ nhiệm --}}
-
-                <div class="col-md-6 mb-3">
-
-                    <label class="form-label fw-semibold">
-
-                        Giáo viên chủ nhiệm
-
-                    </label>
-
-                    <input
-                        type="text"
-                        name="homeroom_teacher"
-                        class="form-control"
-                        placeholder="Ví dụ: Nguyễn Thị Lan"
-                        value="{{ old('homeroom_teacher') }}">
-
-                </div>
-
-
-                {{-- Sĩ số --}}
-
-                <div class="col-md-6 mb-3">
-
-                    <label class="form-label fw-semibold">
-
-                        Sĩ số <span class="text-danger">*</span>
-
-                    </label>
-
-                    <input
-                        type="number"
-                        name="student_count"
-                        class="form-control"
-                        min="0"
-                        placeholder="Ví dụ: 35"
-                        value="{{ old('student_count', 0) }}">
-
-                </div>
-
-
-                {{-- Trạng thái --}}
-
-                <div class="col-md-6 mb-4">
-
-                    <label class="form-label fw-semibold">
-
-                        Trạng thái
-
-                    </label>
-
-                    <select name="status"
-                            class="form-select">
-
-                        <option value="Đang hoạt động">
-                            Đang hoạt động
-                        </option>
-
-                        <option value="Đã kết thúc">
-                            Đã kết thúc
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <hr>
-
-
-            <div class="d-flex gap-2">
-
-                <button type="submit"
-                        class="btn btn-success">
-
-                    <i class="fa-solid fa-save me-1"></i>
-
-                    Lưu lớp
-
-                </button>
-
-                <a href="{{ route('classes.index') }}"
-                   class="btn btn-secondary">
-
-                    Hủy
-
-                </a>
-
-            </div>
-
-        </form>
+        </div>
 
     </div>
 

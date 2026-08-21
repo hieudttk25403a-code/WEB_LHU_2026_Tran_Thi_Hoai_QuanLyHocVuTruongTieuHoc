@@ -1,268 +1,178 @@
 @extends('layouts.app')
 
-@section('title', 'Quản lý môn học')
-
 @section('content')
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container-fluid px-4 py-4">
 
-    <div>
-        <h2 class="fw-bold mb-1">
-            Quản lý môn học
-        </h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <p class="text-muted mb-0">
-            Danh sách các môn học trong trường
-        </p>
-    </div>
+        <div>
 
-    <a href="{{ route('subjects.create') }}"
-       class="btn btn-primary">
+            <h2 class="fw-bold">
+                Quản lý môn học
+            </h2>
 
-        <i class="fa-solid fa-plus me-1"></i>
+            <p class="text-muted">
+                Danh mục môn học và giáo viên đang giảng dạy.
+            </p>
 
-        Thêm môn học
+        </div>
 
-    </a>
-
-</div>
-
-
-@if(session('success'))
-
-    <div class="alert alert-success alert-dismissible fade show">
-
-        <i class="fa-solid fa-circle-check me-2"></i>
-
-        {{ session('success') }}
-
-        <button type="button"
-                class="btn-close"
-                data-bs-dismiss="alert">
-        </button>
+        <a
+            href="{{ route('subjects.create') }}"
+            class="btn btn-primary"
+        >
+            <i class="fas fa-plus me-1"></i>
+            Thêm môn học
+        </a>
 
     </div>
 
-@endif
+
+    @if(session('success'))
+
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+
+    @endif
 
 
-<div class="card shadow-sm border-0 mb-4">
+    <div class="card border-0 shadow-sm mb-4">
 
-    <div class="card-body">
+        <div class="card-body">
 
-        <form method="GET"
-              action="{{ route('subjects.index') }}">
+            <form method="GET">
 
-            <div class="row g-2">
+                <div class="row g-2">
 
-                <div class="col-md-10">
-
-                    <div class="input-group">
-
-                        <span class="input-group-text bg-white">
-
-                            <i class="fa-solid fa-magnifying-glass"></i>
-
-                        </span>
+                    <div class="col-md-10">
 
                         <input
-                            type="text"
                             name="keyword"
+                            value="{{ request('keyword') }}"
                             class="form-control"
-                            placeholder="Tìm theo mã môn, tên môn, giáo viên hoặc khối..."
-                            value="{{ request('keyword') }}">
+                            placeholder="Tìm mã môn, tên môn..."
+                        >
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <button
+                            class="btn btn-primary w-100"
+                        >
+                            Tìm kiếm
+                        </button>
 
                     </div>
 
                 </div>
 
-                <div class="col-md-2 d-grid">
+            </form>
 
-                    <button class="btn btn-primary">
-
-                        <i class="fa-solid fa-search me-1"></i>
-
-                        Tìm kiếm
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </form>
+        </div>
 
     </div>
 
-</div>
 
+    <div class="card border-0 shadow-sm">
 
-<div class="card shadow-sm border-0">
+        <div class="card-body">
 
-    <div class="card-body">
+            <div class="table-responsive">
 
-        <div class="table-responsive">
+                <table class="table table-bordered align-middle">
 
-            <table class="table table-hover align-middle">
-
-                <thead class="table-primary">
+                    <thead class="table-primary">
 
                     <tr>
 
                         <th>#</th>
-
                         <th>Mã môn</th>
-
                         <th>Tên môn</th>
-
-                        <th>Giáo viên</th>
-
                         <th>Khối</th>
-
-                        <th>Trạng thái</th>
-
-                        <th class="text-center">
-                            Thao tác
-                        </th>
+                        <th>Số GV</th>
+                        <th>Thao tác</th>
 
                     </tr>
 
-                </thead>
+                    </thead>
 
-                <tbody>
 
-                @forelse($subjects as $subject)
+                    <tbody>
 
-                    <tr>
+                    @forelse($subjects as $i => $subject)
 
-                        <td>
-                            {{ $subjects->firstItem() + $loop->index }}
-                        </td>
+                        <tr>
 
-                        <td>
+                            <td>
+                                {{ $subjects->firstItem() + $i }}
+                            </td>
 
-                            <strong>
-                                {{ $subject->subject_code }}
-                            </strong>
+                            <td>
+                                <strong>
+                                    {{ $subject->subject_code }}
+                                </strong>
+                            </td>
 
-                        </td>
+                            <td>
+                                {{ $subject->subject_name }}
+                            </td>
 
-                        <td>
-                            {{ $subject->subject_name }}
-                        </td>
+                            <td>
+                                {{ $subject->grade }}
+                            </td>
 
-                        <td>
-                            {{ $subject->teacher ?? 'Chưa phân công' }}
-                        </td>
-
-                        <td>
-
-                            <span class="badge bg-info">
-
-                                Khối {{ $subject->grade }}
-
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            @if($subject->status == 'Đang giảng dạy')
+                            <td>
 
                                 <span class="badge bg-success">
-
-                                    Đang giảng dạy
-
+                                    {{ $subject->teachers_count }}
                                 </span>
 
-                            @else
+                            </td>
 
-                                <span class="badge bg-secondary">
+                            <td>
 
-                                    {{ $subject->status }}
-
-                                </span>
-
-                            @endif
-
-                        </td>
-
-                        <td>
-
-                            <div class="d-flex justify-content-center gap-1">
-
-                                <a href="{{ route('subjects.show', $subject) }}"
-                                   class="btn btn-info btn-sm"
-                                   title="Xem">
-
-                                    <i class="fa-solid fa-eye"></i>
-
+                                <a
+                                    href="{{ route('subjects.show', $subject) }}"
+                                    class="btn btn-info btn-sm text-white"
+                                >
+                                    <i class="fas fa-eye"></i>
+                                    Xem giáo viên
                                 </a>
 
-                                <a href="{{ route('subjects.edit', $subject) }}"
-                                   class="btn btn-warning btn-sm"
-                                   title="Sửa">
-
-                                    <i class="fa-solid fa-pen"></i>
-
+                                <a
+                                    href="{{ route('subjects.edit', $subject) }}"
+                                    class="btn btn-warning btn-sm"
+                                >
+                                    <i class="fas fa-pen"></i>
                                 </a>
 
-                                <form
-                                    action="{{ route('subjects.destroy', $subject) }}"
-                                    method="POST"
-                                    style="display:inline;">
+                            </td>
 
-                                    @csrf
+                        </tr>
 
-                                    @method('DELETE')
+                    @empty
 
-                                    <button
-                                        type="submit"
-                                        class="btn btn-danger btn-sm"
-                                        title="Xóa"
-                                        onclick="return confirm('Bạn có chắc muốn xóa môn học này không?')">
+                        <tr>
 
-                                        <i class="fa-solid fa-trash"></i>
+                            <td
+                                colspan="6"
+                                class="text-center text-muted py-4"
+                            >
+                                Chưa có môn học.
+                            </td>
 
-                                    </button>
+                        </tr>
 
-                                </form>
+                    @endforelse
 
-                            </div>
+                    </tbody>
 
-                        </td>
+                </table>
 
-                    </tr>
-
-                @empty
-
-                    <tr>
-
-                        <td colspan="7"
-                            class="text-center py-5">
-
-                            <i class="fa-solid fa-book fa-2x text-muted mb-3"></i>
-
-                            <p class="text-muted mb-0">
-
-                                Chưa có dữ liệu môn học.
-
-                            </p>
-
-                        </td>
-
-                    </tr>
-
-                @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        <div class="mt-3">
+            </div>
 
             {{ $subjects->links() }}
 

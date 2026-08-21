@@ -1,175 +1,410 @@
 @extends('layouts.app')
 
-@section('title', 'Quản lý học sinh')
-
 @section('content')
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Quản lý học sinh</h2>
+<div class="container-fluid py-4">
 
-    <a href="{{ route('students.create') }}" class="btn btn-primary">
-        <i class="fa-solid fa-plus"></i>
-        Thêm học sinh
-    </a>
-</div>
+    {{-- Tiêu đề --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="fas fa-user-graduate me-2 text-success"></i>
+                Quản lý học sinh
+            </h3>
 
-@if(session('success'))
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    {{ session('success') }}
+            <p class="text-muted mb-0">
+                Danh sách và thông tin học sinh
+            </p>
+        </div>
 
-    <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Close">
-    </button>
-</div>
-@endif
+        <a href="{{ route('students.create') }}" class="btn btn-success">
+            <i class="fas fa-plus me-1"></i>
+            Thêm học sinh
+        </a>
+    </div>
 
-<!-- Form tìm kiếm -->
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
 
-        <form method="GET" action="{{ route('students.index') }}">
+    {{-- Thông báo --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>
+            {{ session('success') }}
 
-            <div class="row">
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    @endif
 
-                <div class="col-md-10">
 
-                    <input
-                        type="text"
-                        name="keyword"
-                        class="form-control"
-                        placeholder="Nhập mã học sinh, họ tên hoặc email..."
-                        value="{{ request('keyword') }}">
+    {{-- Bộ lọc --}}
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
 
-                </div>
+            <form method="GET"
+                  action="{{ route('students.index') }}">
 
-                <div class="col-md-2">
+                <div class="row g-3">
 
-                    <div class="d-flex gap-2">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">
+                            Tìm kiếm
+                        </label>
 
-                        <button class="btn btn-primary flex-fill">
-                            <i class="fa-solid fa-search"></i>
+                        <input type="text"
+                               name="keyword"
+                               class="form-control"
+                               value="{{ request('keyword') }}"
+                               placeholder="Mã HS, họ tên, email, SĐT...">
+                    </div>
+
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">
+                            Lớp
+                        </label>
+
+                        <select name="class_id"
+                                class="form-select">
+
+                            <option value="">
+                                -- Tất cả lớp --
+                            </option>
+
+                            @foreach($classes as $class)
+
+                                <option value="{{ $class->id }}"
+                                    {{ request('class_id') == $class->id ? 'selected' : '' }}>
+
+                                    {{ $class->class_name }}
+
+                                </option>
+
+                            @endforeach
+
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">
+                            Trạng thái
+                        </label>
+
+                        <select name="status"
+                                class="form-select">
+
+                            <option value="">
+                                -- Tất cả --
+                            </option>
+
+                            <option value="Đang học"
+                                {{ request('status') == 'Đang học' ? 'selected' : '' }}>
+                                Đang học
+                            </option>
+
+                            <option value="Chuyển trường"
+                                {{ request('status') == 'Chuyển trường' ? 'selected' : '' }}>
+                                Chuyển trường
+                            </option>
+
+                            <option value="Bảo lưu"
+                                {{ request('status') == 'Bảo lưu' ? 'selected' : '' }}>
+                                Bảo lưu
+                            </option>
+
+                            <option value="Đuổi học"
+                                {{ request('status') == 'Đuổi học' ? 'selected' : '' }}>
+                                Đuổi học
+                            </option>
+
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-2 d-flex align-items-end">
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+
+                            <i class="fas fa-search me-1"></i>
+                            Tìm kiếm
+
                         </button>
-
-                        <a href="{{ route('students.index') }}"
-                           class="btn btn-secondary">
-                            <i class="fa-solid fa-rotate-right"></i>
-                        </a>
 
                     </div>
 
                 </div>
 
+            </form>
+
+        </div>
+    </div>
+
+
+    {{-- Bảng học sinh --}}
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-success text-white">
+
+            <div class="d-flex justify-content-between">
+
+                <span class="fw-bold">
+                    <i class="fas fa-users me-2"></i>
+                    Danh sách học sinh
+                </span>
+
+                <span>
+                    {{ $students->total() }} học sinh
+                </span>
+
             </div>
 
-        </form>
-
-    </div>
-</div>
-
-<div class="card shadow-sm">
-
-    <div class="card-body">
-
-        <table class="table table-bordered table-hover align-middle">
-
-            <thead class="table-primary">
-
-                <tr>
-                    <th width="60">STT</th>
-                    <th>Mã HS</th>
-                    <th>Họ và tên</th>
-                    <th>Ngày sinh</th>
-                    <th>Giới tính</th>
-                    <th>Email</th>
-                    <th>SĐT</th>
-                    <th>Trạng thái</th>
-                    <th width="220">Thao tác</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                @forelse($students as $student)
-
-                <tr>
-
-                    <td>{{ $loop->iteration }}</td>
-
-                    <td>{{ $student->student_code }}</td>
-
-                    <td>{{ $student->full_name }}</td>
-
-                    <td>{{ $student->date_of_birth }}</td>
-
-                    <td>{{ $student->gender }}</td>
-
-                    <td>{{ $student->email }}</td>
-
-                    <td>{{ $student->phone }}</td>
-
-                    <td>
-                        <span class="badge bg-success">
-                            {{ $student->status }}
-                        </span>
-                    </td>
-
-                    <td>
-
-                        <a href="{{ route('students.show', $student->id) }}"
-                           class="btn btn-info btn-sm">
-                            <i class="fa-solid fa-eye"></i>
-                        </a>
-
-                        <a href="{{ route('students.edit', $student->id) }}"
-                           class="btn btn-warning btn-sm">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-
-                        <form action="{{ route('students.destroy', $student->id) }}"
-                              method="POST"
-                              class="d-inline">
-
-                            @csrf
-                            @method('DELETE')
-
-                            <button
-                                type="submit"
-                                class="btn btn-danger btn-sm"
-                                onclick="return confirm('Bạn có chắc muốn xóa?')">
-
-                                <i class="fa-solid fa-trash"></i>
-
-                            </button>
-
-                        </form>
-
-                    </td>
-
-                </tr>
-
-                @empty
-
-                <tr>
-
-                    <td colspan="9" class="text-center">
-                        Chưa có dữ liệu học sinh.
-                    </td>
-
-                </tr>
-
-                @endforelse
-
-            </tbody>
-
-        </table>
-
-        <div class="mt-3">
-            {{ $students->links() }}
         </div>
+
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle mb-0">
+
+                    <thead class="table-primary">
+
+                        <tr>
+
+                            <th class="text-center">
+                                STT
+                            </th>
+
+                            <th>
+                                Mã HS
+                            </th>
+
+                            <th>
+                                Họ và tên
+                            </th>
+
+                            <th>
+                                Ngày sinh
+                            </th>
+
+                            <th>
+                                Giới tính
+                            </th>
+
+                            <th>
+                                Lớp hiện tại
+                            </th>
+
+                            <th>
+                                Email
+                            </th>
+
+                            <th>
+                                SĐT
+                            </th>
+
+                            <th>
+                                Trạng thái
+                            </th>
+
+                            <th class="text-center">
+                                Thao tác
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @forelse($students as $index => $student)
+
+                            <tr>
+
+                                <td class="text-center">
+                                    {{ $students->firstItem() + $index }}
+                                </td>
+
+
+                                <td class="fw-semibold">
+                                    {{ $student->student_code }}
+                                </td>
+
+
+                                <td>
+                                    <div class="fw-semibold">
+                                        {{ $student->full_name }}
+                                    </div>
+                                </td>
+
+
+                                <td>
+                                    {{ $student->date_of_birth
+                                        ? $student->date_of_birth->format('d/m/Y')
+                                        : '-' }}
+                                </td>
+
+
+                                <td>
+                                    {{ $student->gender }}
+                                </td>
+
+
+                                {{-- LỚP HIỆN TẠI --}}
+                                <td>
+
+                                    @if($student->schoolClass)
+
+                                        <span class="badge bg-primary fs-6">
+
+                                            {{ $student->schoolClass->class_name }}
+
+                                        </span>
+
+                                        <div class="small text-muted mt-1">
+
+                                            Khối {{ $student->schoolClass->grade }}
+
+                                        </div>
+
+                                    @else
+
+                                        <span class="text-muted">
+                                            Chưa xếp lớp
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                <td>
+                                    {{ $student->email ?? '-' }}
+                                </td>
+
+
+                                <td>
+                                    {{ $student->phone ?? '-' }}
+                                </td>
+
+
+                                <td>
+
+                                    @if($student->status == 'Đang học')
+
+                                        <span class="badge bg-success">
+                                            Đang học
+                                        </span>
+
+                                    @elseif($student->status == 'Bảo lưu')
+
+                                        <span class="badge bg-warning text-dark">
+                                            Bảo lưu
+                                        </span>
+
+                                    @elseif($student->status == 'Chuyển trường')
+
+                                        <span class="badge bg-secondary">
+                                            Chuyển trường
+                                        </span>
+
+                                    @else
+
+                                        <span class="badge bg-danger">
+                                            {{ $student->status }}
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="d-flex gap-2">
+
+                                        <a href="{{ route('students.show', $student) }}"
+                                           class="btn btn-info btn-sm text-white"
+                                           title="Xem chi tiết">
+
+                                            <i class="fas fa-eye"></i>
+
+                                        </a>
+
+
+                                        <a href="{{ route('students.edit', $student) }}"
+                                           class="btn btn-warning btn-sm"
+                                           title="Chỉnh sửa">
+
+                                            <i class="fas fa-edit"></i>
+
+                                        </a>
+
+
+                                        <form action="{{ route('students.destroy', $student) }}"
+                                              method="POST"
+                                              onsubmit="return confirm('Bạn có chắc muốn xóa học sinh này không?');">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                    class="btn btn-danger btn-sm"
+                                                    title="Xóa">
+
+                                                <i class="fas fa-trash"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        @empty
+
+                            <tr>
+
+                                <td colspan="10"
+                                    class="text-center py-5">
+
+                                    <i class="fas fa-user-slash fa-2x text-muted mb-3"></i>
+
+                                    <div class="text-muted">
+                                        Không tìm thấy học sinh.
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        @if($students->hasPages())
+
+            <div class="card-footer">
+
+                {{ $students->links() }}
+
+            </div>
+
+        @endif
 
     </div>
 

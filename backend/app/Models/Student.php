@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Attendance;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\StudentParent;
 
 class Student extends Model
 {
@@ -19,21 +19,81 @@ class Student extends Model
         'email',
         'phone',
         'class_id',
-        'status'
+        'status',
     ];
 
+    protected $casts = [
+        'date_of_birth' => 'date',
+    ];
+
+    /**
+     * Lớp hiện tại
+     */
+    public function schoolClass()
+    {
+        return $this->belongsTo(SchoolClass::class, 'class_id');
+    }
+
+    /**
+     * Toàn bộ lịch sử lớp
+     */
+    public function classHistories()
+    {
+        return $this->hasMany(
+            StudentClassHistory::class,
+            'student_id'
+        )->with([
+            'schoolClass',
+            'schoolYear'
+        ])->orderByDesc('school_year_id');
+    }
+
+    /**
+     * Phụ huynh
+     */
+    public function parents()
+    {
+        return $this->hasMany(StudentParent::class);
+    }
+
+    /**
+     * Hồ sơ sức khỏe
+     */
+    public function healthProfile()
+    {
+        return $this->hasOne(StudentHealth::class);
+    }
+
+    /**
+     * Điểm
+     */
     public function scores()
     {
         return $this->hasMany(Score::class);
     }
 
-    public function parents()
+public function academicResults()
 {
-    return $this->hasMany(StudentParent::class);
+    return $this->hasMany(
+        StudentAcademicResult::class,
+        'student_id'
+    );
 }
 
-    public function health()
+public function attendances()
 {
-    return $this->hasOne(StudentHealth::class);
+    return $this->hasMany(
+        Attendance::class,
+        'student_id'
+    );
 }
+
+public function yearResults()
+{
+    return $this->hasMany(
+        StudentYearResult::class,
+        'student_id'
+    );
+}
+
 }

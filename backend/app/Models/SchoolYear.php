@@ -21,4 +21,36 @@ class SchoolYear extends Model
         'end_date' => 'date',
         'is_active' => 'boolean',
     ];
+
+    public function studentClassHistories()
+    {
+        return $this->hasMany(
+            StudentClassHistory::class,
+            'school_year_id'
+        );
+    }
+
+    public function scores()
+    {
+        return $this->hasMany(
+            Score::class,
+            'school_year_id'
+        );
+    }
+
+    public function classAssignments()
+    {
+        return $this->hasMany(
+            ClassAssignment::class,
+            'school_year_id'
+        );
+    }
+
+public function teacherSubjectAssignments()
+{
+    return $this->hasMany(
+        TeacherSubjectAssignment::class,
+        'school_year_id'
+    );
+}
 }

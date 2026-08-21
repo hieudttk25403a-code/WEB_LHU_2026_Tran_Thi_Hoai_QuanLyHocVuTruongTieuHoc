@@ -1,187 +1,304 @@
 @extends('layouts.app')
 
-@section('title','Thêm học sinh')
-
 @section('content')
 
-<div class="card shadow">
+<div class="container-fluid py-4">
 
-    <div class="card-header bg-primary text-white">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="fas fa-user-plus text-success me-2"></i>
+                Thêm học sinh
+            </h3>
 
-        <h4 class="mb-0">
-            Thêm học sinh
-        </h4>
+            <p class="text-muted mb-0">
+                Thêm hồ sơ học sinh vào hệ thống
+            </p>
+        </div>
 
+        <a href="{{ route('students.index') }}"
+           class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>
+            Quay lại
+        </a>
     </div>
 
-    <div class="card-body">
 
-        @if ($errors->any())
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>Vui lòng kiểm tra lại:</strong>
 
-            <div class="alert alert-danger">
+            <ul class="mb-0 mt-2">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-                <ul class="mb-0">
 
-                    @foreach ($errors->all() as $error)
+    <form action="{{ route('students.store') }}"
+          method="POST">
 
-                        <li>{{ $error }}</li>
+        @csrf
 
-                    @endforeach
+        <div class="card shadow-sm mb-4">
 
-                </ul>
-
+            <div class="card-header bg-success text-white">
+                <i class="fas fa-user me-2"></i>
+                Thông tin cá nhân
             </div>
 
-        @endif
+            <div class="card-body">
 
-        <form action="{{ route('students.store') }}"
-              method="POST">
+                <div class="row g-3">
 
-            @csrf
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">
+                            Mã học sinh
+                        </label>
 
-            <div class="row">
+                        <input type="text"
+                               name="student_code"
+                               class="form-control"
+                               value="{{ old('student_code') }}"
+                               required>
+                    </div>
 
-                <div class="col-md-6 mb-3">
 
-                    <label class="form-label">
-                        Mã học sinh
-                    </label>
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">
+                            Họ và tên
+                        </label>
 
-                    <input
-                        type="text"
-                        name="student_code"
-                        class="form-control"
-                        value="{{ old('student_code') }}">
+                        <input type="text"
+                               name="full_name"
+                               class="form-control"
+                               value="{{ old('full_name') }}"
+                               required>
+                    </div>
 
-                </div>
 
-                <div class="col-md-6 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">
+                            Ngày sinh
+                        </label>
 
-                    <label class="form-label">
-                        Họ tên
-                    </label>
+                        <input type="date"
+                               name="date_of_birth"
+                               class="form-control"
+                               value="{{ old('date_of_birth') }}"
+                               required>
+                    </div>
 
-                    <input
-                        type="text"
-                        name="full_name"
-                        class="form-control"
-                        value="{{ old('full_name') }}">
 
-                </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">
+                            Giới tính
+                        </label>
 
-                <div class="col-md-6 mb-3">
+                        <select name="gender"
+                                class="form-select"
+                                required>
 
-                    <label class="form-label">
-                        Ngày sinh
-                    </label>
+                            <option value="">
+                                -- Chọn giới tính --
+                            </option>
 
-                    <input
-                        type="date"
-                        name="date_of_birth"
-                        class="form-control"
-                        value="{{ old('date_of_birth') }}">
+                            <option value="Nam"
+                                {{ old('gender') == 'Nam' ? 'selected' : '' }}>
+                                Nam
+                            </option>
 
-                </div>
+                            <option value="Nữ"
+                                {{ old('gender') == 'Nữ' ? 'selected' : '' }}>
+                                Nữ
+                            </option>
 
-                <div class="col-md-6 mb-3">
+                        </select>
+                    </div>
 
-                    <label class="form-label">
-                        Giới tính
-                    </label>
 
-                    <select
-                        name="gender"
-                        class="form-select">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">
+                            Trạng thái
+                        </label>
 
-                        <option value="">-- Chọn --</option>
+                        <select name="status"
+                                class="form-select">
 
-                        <option value="Nam">Nam</option>
+                            <option value="Đang học"
+                                {{ old('status', 'Đang học') == 'Đang học' ? 'selected' : '' }}>
+                                Đang học
+                            </option>
 
-                        <option value="Nữ">Nữ</option>
+                            <option value="Chuyển trường">
+                                Chuyển trường
+                            </option>
 
-                    </select>
+                            <option value="Bảo lưu">
+                                Bảo lưu
+                            </option>
 
-                </div>
+                            <option value="Thôi học">
+                                Thôi học
+                            </option>
 
-                <div class="col-md-12 mb-3">
+                            <option value="Đuổi học">
+                                Đuổi học
+                            </option>
 
-                    <label class="form-label">
-                        Địa chỉ
-                    </label>
+                        </select>
+                    </div>
 
-                    <textarea
-                        name="address"
-                        rows="3"
-                        class="form-control">{{ old('address') }}</textarea>
 
-                </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">
+                            Địa chỉ
+                        </label>
 
-                <div class="col-md-6 mb-3">
+                        <textarea name="address"
+                                  class="form-control"
+                                  rows="2">{{ old('address') }}</textarea>
+                    </div>
 
-                    <label class="form-label">
-                        Email
-                    </label>
 
-                    <input
-                        type="email"
-                        name="email"
-                        class="form-control"
-                        value="{{ old('email') }}">
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">
+                            Email
+                        </label>
 
-                </div>
+                        <input type="email"
+                               name="email"
+                               class="form-control"
+                               value="{{ old('email') }}">
+                    </div>
 
-                <div class="col-md-6 mb-3">
 
-                    <label class="form-label">
-                        Số điện thoại
-                    </label>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">
+                            Số điện thoại
+                        </label>
 
-                    <input
-                        type="text"
-                        name="phone"
-                        class="form-control"
-                        value="{{ old('phone') }}">
-
-                </div>
-
-                <div class="col-md-6 mb-4">
-
-                    <label class="form-label">
-                        Trạng thái
-                    </label>
-
-                    <select
-                        name="status"
-                        class="form-select">
-
-                        <option value="Đang học">Đang học</option>
-
-                        <option value="Nghỉ học">Nghỉ học</option>
-
-                    </select>
+                        <input type="text"
+                               name="phone"
+                               class="form-control"
+                               value="{{ old('phone') }}">
+                    </div>
 
                 </div>
 
             </div>
+        </div>
 
-            <button class="btn btn-success">
 
-                <i class="fa fa-save"></i>
+        <div class="card shadow-sm mb-4">
 
-                Lưu học sinh
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-school me-2"></i>
+                Phân lớp
+            </div>
 
-            </button>
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Năm học
+                        </label>
+
+                        <select name="school_year_id"
+                                class="form-select">
+
+                            <option value="">
+                                -- Chọn năm học --
+                            </option>
+
+                            @foreach ($schoolYears as $schoolYear)
+
+                                <option value="{{ $schoolYear->id }}"
+                                    {{ old('school_year_id', $schoolYear->is_active ? $schoolYear->id : '') == $schoolYear->id ? 'selected' : '' }}>
+
+                                    {{ $schoolYear->name }}
+
+                                    @if ($schoolYear->is_active)
+                                        (Đang diễn ra)
+                                    @endif
+
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                        <small class="text-muted">
+                            Dùng để tạo lịch sử lớp học của học sinh.
+                        </small>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Lớp
+                        </label>
+
+                        <select name="class_id"
+                                class="form-select">
+
+                            <option value="">
+                                -- Chọn lớp --
+                            </option>
+
+                            @foreach ($classes as $class)
+
+                                <option value="{{ $class->id }}"
+                                    {{ old('class_id') == $class->id ? 'selected' : '' }}>
+
+                                    Khối {{ $class->grade }}
+                                    - {{ $class->class_name }}
+
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                        <small class="text-muted">
+                            Khi lưu, lớp hiện tại và lịch sử lớp sẽ được đồng bộ.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="d-flex justify-content-end gap-2">
 
             <a href="{{ route('students.index') }}"
                class="btn btn-secondary">
 
-                Quay lại
+                Hủy
 
             </a>
 
-        </form>
+            <button type="submit"
+                    class="btn btn-success">
 
-    </div>
+                <i class="fas fa-save me-1"></i>
+                Lưu học sinh
+
+            </button>
+
+        </div>
+
+    </form>
 
 </div>
 

@@ -9,63 +9,101 @@ use Illuminate\Http\Request;
 class StudentHealthController extends Controller
 {
     /**
-     * Lưu / cập nhật hồ sơ sức khỏe của học sinh
+     * Form tạo hồ sơ sức khỏe
+     */
+    public function create(Student $student)
+    {
+        // Nếu đã có hồ sơ thì chuyển sang sửa
+        if ($student->health) {
+            return redirect()
+                ->route('student-health.edit', $student);
+        }
+
+        return view('student_health.create', compact('student'));
+    }
+
+    /**
+     * Lưu hồ sơ sức khỏe
      */
     public function store(Request $request, Student $student)
     {
-        $request->validate([
-            'height' => 'nullable|numeric|min:0|max:300',
-            'weight' => 'nullable|numeric|min:0|max:500',
-            'blood_type' => 'nullable|in:A,B,AB,O',
-            'allergies' => 'nullable|string|max:1000',
-            'notes' => 'nullable|string|max:2000',
-        ], [
-            'height.numeric' => 'Chiều cao phải là số.',
-            'height.min' => 'Chiều cao không hợp lệ.',
-            'height.max' => 'Chiều cao không được vượt quá 300 cm.',
-
-            'weight.numeric' => 'Cân nặng phải là số.',
-            'weight.min' => 'Cân nặng không hợp lệ.',
-            'weight.max' => 'Cân nặng không được vượt quá 500 kg.',
-
-            'blood_type.in' => 'Nhóm máu không hợp lệ.',
+        $validated = $request->validate([
+            'height' => 'nullable|numeric|min:0|max:250',
+            'weight' => 'nullable|numeric|min:0|max:200',
+            'blood_group' => 'nullable|string|max:20',
+            'allergy' => 'nullable|string|max:1000',
+            'note' => 'nullable|string|max:2000',
         ]);
 
-        StudentHealth::updateOrCreate(
-            [
-                'student_id' => $student->id,
-            ],
-            [
-                'height' => $request->height,
-                'weight' => $request->weight,
-                'blood_type' => $request->blood_type,
-                'allergies' => $request->allergies,
-                'notes' => $request->notes,
-            ]
+        $student->health()->updateOrCreate(
+            ['student_id' => $student->id],
+            $validated
         );
 
         return redirect()
             ->route('students.show', $student)
-            ->with(
-                'success',
-                'Cập nhật hồ sơ sức khỏe thành công!'
-            );
+            ->with('success', 'Lưu hồ sơ sức khỏe thành công!');
     }
 
     /**
-     * Xóa hồ sơ sức khỏe
+     * Form chỉnh sửa
      */
-    public function destroy(StudentHealth $studentHealth)
+    public function edit(Student $student)
     {
-        $student = $studentHealth->student;
+        $health = $student->health;
 
-        $studentHealth->delete();
+        if (!$health) {
+            return redirect()
+                ->route('student-health.create', $student);
+        }
+
+        return view('student_health.edit', compact(
+            'student',
+            'health'
+        ));
+    }
+
+    /**
+     * Cập nhật
+     */
+    public function update(
+        Request $request,
+        Student $student
+    ) {
+        $validated = $request->validate([
+            'height' => 'nullable|numeric|min:0|max:250',
+            'weight' => 'nullable|numeric|min:0|max:200',
+            'blood_group' => 'nullable|string|max:20',
+            'allergy' => 'nullable|string|max:1000',
+            'note' => 'nullable|string|max:2000',
+        ]);
+
+        $health = $student->health;
+
+        if (!$health) {
+            $health = new StudentHealth();
+            $health->student_id = $student->id;
+        }
+
+        $health->fill($validated);
+        $health->save();
 
         return redirect()
             ->route('students.show', $student)
-            ->with(
-                'success',
-                'Xóa hồ sơ sức khỏe thành công!'
-            );
+            ->with('success', 'Cập nhật hồ sơ sức khỏe thành công!');
+    }
+
+    /**
+     * Xóa hồ sơ
+     */
+    public function destroy(Student $student)
+    {
+        if ($student->health) {
+            $student->health->delete();
+        }
+
+        return redirect()
+            ->route('students.show', $student)
+            ->with('success', 'Xóa hồ sơ sức khỏe thành công!');
     }
 }

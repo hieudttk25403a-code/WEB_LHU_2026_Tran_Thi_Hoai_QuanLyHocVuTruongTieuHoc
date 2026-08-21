@@ -15,14 +15,11 @@ class StudentHealth extends Model
         'student_id',
         'height',
         'weight',
-        'blood_type',
-        'allergies',
-        'notes',
+        'blood_group',
+        'allergy',
+        'note',
     ];
 
-    /**
-     * Hồ sơ sức khỏe thuộc về một học sinh
-     */
     public function student()
     {
         return $this->belongsTo(Student::class, 'student_id');
